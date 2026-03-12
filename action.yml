@@ -1,50 +1,50 @@
 name: pnpmi
-description: 'Default pnpm create action'
+   description: 'Default pnpm create action'
 
-inputs:
-  branch:
-    description: 'Branch to test'
-    required: false
-    type: string
+   inputs:
+     branch:
+       description: 'Branch to test'
+       required: false
+       type: string
 
-runs:
-  using: 'composite'
+   runs:
+     using: 'composite'
 
-  steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.branch }}
+     steps:
+       - name: Checkout repo
+         uses: actions/checkout@v6
+         with:
+           ref: ${{ inputs.branch }}
 
-    - name: 'Install node'
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
-        always-auth: true
-        registry-url: 'https://registry.npmjs.org'
-        scope: '@bemedev'
+       - name: 'Install node'
+         uses: actions/setup-node@v6
+         with:
+           node-version: 22
+           always-auth: true
+           registry-url: 'https://registry.npmjs.org'
+           scope: '@bemedev'
 
-    - name: Install pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: 10
-        run_install: false
-  
-    - name: Get pnpm store directory
-      id: pnpm-cache
-      shell: bash
-      run: |
-        echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+       - name: Install pnpm
+         uses: pnpm/action-setup@v4
+         with:
+           version: 10
+           run_install: false
 
-    - name: Setup pnpm cache
-      uses: actions/cache@v4
-      with:
-        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-        key:
-          ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml')}}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store-
+       - name: Get pnpm store directory
+         id: pnpm-cache
+         shell: bash
+         run: |
+           echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
-    - name: Install dependencies
-      shell: bash
-      run: pnpm install --frozen-lockfile
+       - name: Setup pnpm cache
+         uses: actions/cache@v5
+         with:
+           path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+           key:
+             ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml')}}
+           restore-keys: |
+             ${{ runner.os }}-pnpm-store-
+
+       - name: Install dependencies
+         shell: bash
+         run: pnpm install --frozen-lockfile
